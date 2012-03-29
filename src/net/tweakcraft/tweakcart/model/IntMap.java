@@ -19,7 +19,6 @@
 package net.tweakcraft.tweakcart.model;
 
 import org.bukkit.Material;
-import org.bukkit.material.MaterialData;
 
 import java.util.Arrays;
 
@@ -30,7 +29,7 @@ import java.util.Arrays;
  */
 public class IntMap {
     public static final int materialSize = Material.values().length;
-    public static final int mapSize = materialSize + 57;
+    public static final int mapSize = materialSize + 67;
     private int[] mapData;
 
     public IntMap() {
@@ -88,7 +87,7 @@ public class IntMap {
     }
 
     public static int getIntIndex(int id, byte data) {
-        return getIntIndex(new MaterialData(id, data).getItemType(), data);
+        return getIntIndex(Material.getMaterial(id), data);
     }
 
     private static int getIntIndex(Material m, byte data) {
@@ -103,41 +102,58 @@ public class IntMap {
                 //Alle andere gevallen
                 switch (m) {
                     case SAPLING:
-                        if (data < 3)
+                        if (data < 4)
                             return materialSize + (int) data;
                         else
                             return -1;
                     case LOG:
-                        if (data < 3)
-                            return materialSize + (int) data + 2;
+                        if (data < 4)
+                            return materialSize + (int) data + 3;
                         else
                             return -1;
                     case LEAVES:
                         if (data < 3)
-                            return materialSize + (int) data + 4;
+                            return materialSize + (int) data + 6;
                         else
                             return -1;
                     case WOOL:
                         if (data < 16)
-                            return materialSize + (int) data + 19;
+                            return materialSize + (int) data +21;
                         else
                             return -1;
                     case INK_SACK:
                         if (data < 16)
-                            return materialSize + (int) data + 34;
+                            return materialSize + (int) data + 36;
                         else
                             return -1;
                     case COAL:
                         if (data < 2)
-                            return materialSize + (int) data + 49;
+                            return materialSize + (int) data + 51;
                         else
                             return -1;
                     case STEP:
                         if (data < 7)
-                            return materialSize + (int) data + 50;
+                            return materialSize + (int) data + 52;
                         else
                             return -1;
-
+                    case LONG_GRASS:
+                        if(data < 3)
+                            return materialSize + (int) data + 58;
+                        else
+                            return -1;
+                    case WOOD:
+                        if(data < 4)
+                            return materialSize + (int) data + 61;
+                        else
+                            return -1;
+                    case SMOOTH_BRICK:
+                        if(data < 4)
+                            return materialSize + (int) data + 64;
+                        else
+                            return -1;
+                    case SANDSTONE:
+                        if(data < 3)
+                            return materialSize + (int) data + 66;
                     default:
                         return m.ordinal();
                 }
@@ -161,12 +177,6 @@ public class IntMap {
         }
     }
 
-    /**
-     * Combine two IntMaps, with otherMap having higher priority than this.
-     * Please do not use this function, as it is slow.
-     *
-     * @param otherMap Map to combine with.
-     */
     @Deprecated
     public void combine(IntMap otherMap) {
         for (int index = 0; index < mapData.length; index++) {
@@ -174,11 +184,6 @@ public class IntMap {
                 mapData[index] = otherMap.mapData[index];
         }
     }
-
-    /**
-     * Sets a range of the IntMap
-     * prevents multiple calls to IntMap and back
-     */
 
     public boolean setRange(int startId, byte startdata, int endId, byte enddata, int value) {
         if (startdata < -1 || enddata < -1 || startId > endId
@@ -264,7 +269,7 @@ public class IntMap {
         String str = "{\n";
         for (int i = 0; i < mapData.length; i++) {
             if (mapData[i] != 0) {
-                str += "    [" + i + "] -> " + mapData[i] + "\n";
+                str += " [" + i + "] -> " + mapData[i] + "\n";
             }
         }
         str += "}";
@@ -275,6 +280,7 @@ public class IntMap {
         fillAll(false);
     }
 
+    @Deprecated
     public void fillAll(boolean negative) {
         int value = negative ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         for (int i = 0; i < mapData.length; i++) {
