@@ -118,7 +118,7 @@ public class IntMap {
                             return -1;
                     case WOOL:
                         if (data < 16)
-                            return materialSize + (int) data +21;
+                            return materialSize + (int) data + 21;
                         else
                             return -1;
                     case INK_SACK:
@@ -137,22 +137,22 @@ public class IntMap {
                         else
                             return -1;
                     case LONG_GRASS:
-                        if(data < 3)
+                        if (data < 3)
                             return materialSize + (int) data + 58;
                         else
                             return -1;
                     case WOOD:
-                        if(data < 4)
+                        if (data < 4)
                             return materialSize + (int) data + 61;
                         else
                             return -1;
                     case SMOOTH_BRICK:
-                        if(data < 4)
+                        if (data < 4)
                             return materialSize + (int) data + 64;
                         else
                             return -1;
                     case SANDSTONE:
-                        if(data < 3)
+                        if (data < 3)
                             return materialSize + (int) data + 66;
                     default:
                         return m.ordinal();
