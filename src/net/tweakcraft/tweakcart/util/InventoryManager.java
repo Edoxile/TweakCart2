@@ -49,27 +49,37 @@ public class InventoryManager {
         //Compile the return data from these three bytes
         int[] returnData = new int[3];
 
-        for (int i = 0; i < from.length; i++) {
-            ItemStack fStack = from[i];
+        for (int fromIndex = 0; fromIndex < from.length; fromIndex++) {
+            ItemStack fStack = from[fromIndex];
             if (fStack == null) continue;
             int maxAmountToMove = map.getInt(fStack.getType(), (byte) fStack.getDurability());
             if (fStack == null || maxAmountToMove == 0) {
                 returnData[0]++;
                 continue;
             }
-            for (int j = 0; j < to.length; j++) {
-                ItemStack tStack = to[j];
+            for (int toIndex = 0; toIndex < to.length; toIndex++) {
+                ItemStack tStack = to[toIndex];
                 if (tStack == null) {
                     if (fStack.getAmount() < maxAmountToMove) {
-                        to[j] = fStack;
+                        to[toIndex] = fStack;
                         fStack = null;
                         returnData[0]++;
-                        map.setInt(fStack.getType(), (byte) fStack.getDurability(), maxAmountToMove - fStack.getAmount());
+                        map.setInt(
+                                fStack.getType(),
+                                (byte) fStack.getDurability(),
+                                maxAmountToMove - fStack.getAmount()
+                        );
                         break;
                     } else {
-                        to[j] = new ItemStack(fStack.getType(), maxAmountToMove, fStack.getDurability(), fStack.getData().getData());
+                        //TODO: check if durability & data is the same in this case
+                        to[toIndex] = new ItemStack(
+                                fStack.getType(),
+                                maxAmountToMove,
+                                fStack.getDurability()
+                        );
                         fStack.setAmount(fStack.getAmount() - maxAmountToMove);
                         map.setInt(fStack.getType(), fStack.getData().getData(), 0);
+                        continue;
                     }
                 } else if (tStack.getAmount() == 64) {
                     returnData[1]++;
@@ -80,12 +90,20 @@ public class InventoryManager {
                     if (fStack.getAmount() <= maxAmountToMove) {
                         int total = fStack.getAmount() + tStack.getAmount();
                         if (total > 64) {
-                            map.setInt(tStack.getType(), (byte) tStack.getDurability(), map.getInt(tStack.getType(), (byte) tStack.getDurability()) - (64 - tStack.getAmount()));
+                            map.setInt(
+                                    tStack.getType(),
+                                    (byte) tStack.getDurability(),
+                                    map.getInt(tStack.getType(), (byte) tStack.getDurability()) - (64 - tStack.getAmount())
+                            );
                             tStack.setAmount(64);
                             fStack.setAmount(total - 64);
                             returnData[1]++;
                         } else {
-                            map.setInt(tStack.getType(), (byte) tStack.getDurability(), map.getInt(tStack.getType(), (byte) tStack.getDurability()) - fStack.getAmount());
+                            map.setInt(
+                                    tStack.getType(),
+                                    (byte) tStack.getDurability(),
+                                    map.getInt(tStack.getType(), (byte) tStack.getDurability()) - fStack.getAmount()
+                            );
                             tStack.setAmount(total);
                             fStack = null;
                             returnData[0]++;
@@ -96,13 +114,21 @@ public class InventoryManager {
                         int total = maxAmountToMove + tStack.getAmount();
                         int stableAmount = fStack.getAmount() - maxAmountToMove;
                         if (total > 64) {
-                            map.setInt(tStack.getType(), (byte) tStack.getDurability(), map.getInt(tStack.getType(), (byte) tStack.getDurability()) - (64 - tStack.getAmount()));
+                            map.setInt(
+                                    tStack.getType(),
+                                    (byte) tStack.getDurability(),
+                                    map.getInt(tStack.getType(), (byte) tStack.getDurability()) - (64 - tStack.getAmount())
+                            );
                             maxAmountToMove -= 64 - tStack.getAmount();
                             tStack.setAmount(64);
                             fStack.setAmount(total - 64 + stableAmount);
                             returnData[1]++;
                         } else {
-                            map.setInt(tStack.getType(), (byte) tStack.getDurability(), map.getInt(tStack.getType(), (byte) tStack.getDurability()) - maxAmountToMove);
+                            map.setInt(
+                                    tStack.getType(),
+                                    (byte) tStack.getDurability(),
+                                    map.getInt(tStack.getType(), (byte) tStack.getDurability()) - maxAmountToMove
+                            );
                             tStack.setAmount(total);
                             fStack.setAmount(stableAmount);
                             break;
@@ -112,9 +138,9 @@ public class InventoryManager {
                     returnData[2]++;
                     continue;
                 }
-                to[j] = tStack;
+                to[toIndex] = tStack;
             }
-            from[i] = fStack;
+            from[fromIndex] = fStack;
         }
         iFrom.setContents(from);
         iTo.setContents(to);
@@ -124,16 +150,16 @@ public class InventoryManager {
     public static ItemStack[] putContents(Inventory iTo, ItemStack... stackFrom) {
         ItemStack[] stackTo = iTo.getContents();
         fromLoop:
-        for (int i = 0; i < stackFrom.length; i++) {
-            ItemStack fromStack = stackFrom[i];
+        for (int fromIndex = 0; fromIndex < stackFrom.length; fromIndex++) {
+            ItemStack fromStack = stackFrom[fromIndex];
             if (fromStack == null) {
                 continue;
             } else {
-                for (int j = 0; j < stackTo.length; j++) {
-                    ItemStack toStack = stackTo[j];
+                for (int toIndex = 0; toIndex < stackTo.length; toIndex++) {
+                    ItemStack toStack = stackTo[toIndex];
                     if (toStack == null) {
-                        stackTo[j] = fromStack;
-                        stackFrom[i] = null;
+                        stackTo[toIndex] = fromStack;
+                        stackFrom[fromIndex] = null;
                         continue fromLoop;
                     } else if (fromStack.getTypeId() == toStack.getTypeId() && fromStack.getDurability() == toStack.getDurability() && toStack.getEnchantments().isEmpty()) {
                         int total = fromStack.getAmount() + toStack.getAmount();
@@ -144,8 +170,8 @@ public class InventoryManager {
                             toStack.setAmount(total);
                             int remainder = total - 64;
                             if (remainder <= 0) {
-                                stackFrom[i] = null;
-                                stackTo[j] = toStack;
+                                stackFrom[fromIndex] = null;
+                                stackTo[toIndex] = toStack;
                                 continue fromLoop;
                             } else {
                                 fromStack.setAmount(remainder);
@@ -154,10 +180,10 @@ public class InventoryManager {
                     } else {
                         continue;
                     }
-                    stackTo[j] = toStack;
+                    stackTo[toIndex] = toStack;
                 }
             }
-            stackFrom[i] = fromStack;
+            stackFrom[fromIndex] = fromStack;
         }
         iTo.setContents(stackTo);
         return stackFrom;

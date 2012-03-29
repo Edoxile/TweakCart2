@@ -23,8 +23,6 @@ import org.bukkit.Material;
 import java.util.Arrays;
 
 /**
- * *hihi* Edited with eclipse
- *
  * @author Edoxile
  */
 public class IntMap {
@@ -96,10 +94,9 @@ public class IntMap {
         }
         switch (data) {
             case 0:
-                //Alle items waarop we .ordinal kunnen doen
                 return m.ordinal();
             default:
-                //Alle andere gevallen
+                //TODO: reorder list
                 switch (m) {
                     case SAPLING:
                         if (data < 4)
@@ -164,11 +161,15 @@ public class IntMap {
 
     private boolean hasDataValue(int id) {
         switch (id) {
+            case 5:
             case 6:
             case 17:
             case 18:
+            case 24:
+            case 31:
             case 35:
             case 44:
+            case 98:
             case 263:
             case 351:
                 return true;
