@@ -59,7 +59,7 @@ public class TweakCart extends JavaPlugin {
         } catch (IOException e) {
             log("Config file could not be read. Please make sure it exists.", Level.SEVERE);
         } catch (InvalidConfigurationException e) {
-            log("Config file has an invalid syntax. Please check.", Level.SEVERE);
+            log("Config file has an invalid syntax. Please check:" + e.getMessage(), Level.SEVERE);
         }
     }
 
